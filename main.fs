@@ -15,40 +15,43 @@ let noteToNumber note =
         | "A"         -> 9
         | "A#" | "Bb" -> 10
         | "B"  | "Cb" -> 11
+        | _           -> failwith "Note Error"
     number
 
 let numberToFlatNote number =
     let note =
         match number with
-        | 0 ->  "C"
-        | 1 ->  "Db"
-        | 2 ->  "D"
-        | 3 ->  "Eb"
-        | 4 ->  "E"
-        | 5 ->  "F"
-        | 6 ->  "Gb"
-        | 7 ->  "G"
-        | 8 ->  "Ab"
-        | 9 ->  "A"
+        | 0  -> "C"
+        | 1  -> "Db"
+        | 2  -> "D"
+        | 3  -> "Eb"
+        | 4  -> "E"
+        | 5  -> "F"
+        | 6  -> "Gb"
+        | 7  -> "G"
+        | 8  -> "Ab"
+        | 9  -> "A"
         | 10 -> "Bb"
         | 11 -> "B"
+        | _  -> failwith "Number Error"
     note
 
 let numberToSharpNote number =
     let note =
         match number with
-        | 0 ->  "C"
-        | 1 ->  "C#"
-        | 2 ->  "D"
-        | 3 ->  "D#"
-        | 4 ->  "E"
-        | 5 ->  "F"
-        | 6 ->  "F#"
-        | 7 ->  "G"
-        | 8 ->  "G#"
-        | 9 ->  "A"
+        | 0  -> "C"
+        | 1  -> "C#"
+        | 2  -> "D"
+        | 3  -> "D#"
+        | 4  -> "E"
+        | 5  -> "F"
+        | 6  -> "F#"
+        | 7  -> "G"
+        | 8  -> "G#"
+        | 9  -> "A"
         | 10 -> "A#"
         | 11 -> "B"
+        | _  -> failwith "Number Error"
     note
 
 let nameToIntegerArray name =
@@ -67,6 +70,13 @@ let nameToIntegerArray name =
         | "dim7"    -> [|0; 3; 6; 9|]
         | "m7b5"    -> [|0; 3; 6; 10|]
         | "minmaj7" -> [|0; 3; 7; 11|]
+        | "augm7"   -> [|0; 4; 8; 11|]
+        | "dmaj7"   -> [|0; 3; 6; 11|]
+        | "7b5"     -> [|0; 4; 6; 10|]
+        | "maj7b5"  -> [|0; 4; 6; 11|]
+        | "sus2"    -> [|0; 2; 7|]
+        | "sus4"    -> [|0; 5; 7|]
+        | _  -> failwith "Name Error"
     integerArray
 
 let convert (note:string) name =
@@ -74,19 +84,22 @@ let convert (note:string) name =
     let sharp = note.Contains('#')
     let func =
         match name with
-        | "maj"  | "aug"  | "maj6"
-        | "maj7" | "aug7" ->
+        | "maj"    | "aug"  | "maj6"
+        | "maj7"   | "aug7" | "augm7"
+        | "maj7b5" | "sus2" | "sus4" ->
             if flat then
                numberToFlatNote
             else
                numberToSharpNote
-        | "min"  | "dim"  | "min6"
-        | "7"    | "min7" | "dim7"
-        | "m7b5" | "minmaj7"->
+        | "min"  | "dim"     | "min6"
+        | "7"    | "min7"    | "dim7"
+        | "m7b5" | "minmaj7" | "dmaj7"
+        | "7b5" ->
             if sharp then
                 numberToSharpNote
             else
                 numberToFlatNote
+        | _ -> failwith "Name Error"
     func
 
 let createChord note name =
