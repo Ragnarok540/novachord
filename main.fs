@@ -15,7 +15,7 @@ let noteToNumber note =
         | "A"         -> 9
         | "A#" | "Bb" -> 10
         | "B"  | "Cb" -> 11
-        | _           -> failwith "Note Error"
+        | _ -> failwith "Error: Unknown note"
     number
 
 let numberToFlatNote number =
@@ -33,7 +33,7 @@ let numberToFlatNote number =
         | 9  -> "A"
         | 10 -> "Bb"
         | 11 -> "B"
-        | _  -> failwith "Number Error"
+        | _ -> failwith "Error: Out of bounds"
     note
 
 let numberToSharpNote number =
@@ -51,11 +51,11 @@ let numberToSharpNote number =
         | 9  -> "A"
         | 10 -> "A#"
         | 11 -> "B"
-        | _  -> failwith "Number Error"
+        | _  -> failwith "Error: Out of bounds"
     note
 
-let nameToIntegerArray name =
-    let integerArray =
+let nameToIntArr name =
+    let intArr =
         match name with
         | "maj"     -> [|0; 4; 7|]
         | "min"     -> [|0; 3; 7|]
@@ -76,8 +76,8 @@ let nameToIntegerArray name =
         | "maj7b5"  -> [|0; 4; 6; 11|]
         | "sus2"    -> [|0; 2; 7|]
         | "sus4"    -> [|0; 5; 7|]
-        | _  -> failwith "Name Error"
-    integerArray
+        | _ -> failwith "Error: Unknown name"
+    intArr
 
 let convert (note:string) name =
     let flat = note.Contains('b')
@@ -99,14 +99,14 @@ let convert (note:string) name =
                 numberToSharpNote
             else
                 numberToFlatNote
-        | _ -> failwith "Name Error"
+        | _ -> failwith "Error: Unknown name"
     func
 
 let createChord note name =
     let noteNumber = noteToNumber note
-    let integerArray = nameToIntegerArray name
-    let notes = Array.create integerArray.Length noteNumber
-    let notesZip = Array.zip notes integerArray
+    let intArr = nameToIntArr name
+    let notes = Array.create intArr.Length noteNumber
+    let notesZip = Array.zip notes intArr
     let convertFunc = convert note name
     let result =
         notesZip
@@ -116,7 +116,10 @@ let createChord note name =
     result
 
 [<EntryPoint>]
-let main(args) =
-    let result = createChord args.[0] args.[1]
+let main(args : string[]) =
+    if args.Length <> 2 then
+        failwith "Error: Expected arguments <note> and <name>"
+    let note, name = args.[0], args.[1]
+    let result = createChord note name
     printfn "Chord: %A" result
     0
